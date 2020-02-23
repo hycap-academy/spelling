@@ -27,6 +27,9 @@ def create_table(conn):
 
 def add_word(conn, word):
     sql = """INSERT INTO SpellingWords(word) VALUES(?);"""
+    sql = """INSERT INTO SpellingWords(word) 
+            SELECT ? 
+            WHERE NOT EXISTS(SELECT 1 FROM SpellingWords WHERE word = ?);"""
     c = conn.cursor()
     c.execute(sql, word)
     conn.commit()
@@ -39,5 +42,5 @@ f = open("spellinglist.txt")
 
 word = f.readline().strip().lower()
 while word:
-    add_word(conn, (word,))
+    add_word(conn, (word,word))
     word = f.readline().strip().lower()
